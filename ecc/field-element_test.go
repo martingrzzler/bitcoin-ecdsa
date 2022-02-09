@@ -99,10 +99,25 @@ func TestPow(t *testing.T) {
 		{3, NewFieldElement(3, 5), NewFieldElement(2, 5)},
 		{6, NewFieldElement(2, 5), NewFieldElement(4, 5)},
 		{7, NewFieldElement(5, 11), NewFieldElement(3, 11)},
+		{-3, NewFieldElement(7, 13), NewFieldElement(8, 13)},
 	}
 
 	for _, test := range testCases {
 		result := test.x.Pow(test.exp)
+		if !result.Equals(test.want) {
+			t.Errorf("got %s, want %s", result.String(), &test.want)
+		}
+	}
+}
+
+func TestDiv(t *testing.T) {
+	testCases := []struct{ x, y, want FieldElement }{
+		{NewFieldElement(2, 19), NewFieldElement(7, 19), NewFieldElement(3, 19)},
+		{NewFieldElement(7, 19), NewFieldElement(5, 19), NewFieldElement(9, 19)},
+	}
+
+	for _, test := range testCases {
+		result := test.x.Div(test.y)
 		if !result.Equals(test.want) {
 			t.Errorf("got %s, want %s", result.String(), &test.want)
 		}

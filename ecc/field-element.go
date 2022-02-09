@@ -2,8 +2,8 @@ package ecc
 
 import (
 	"fmt"
-	"math"
 	"math/big"
+	"strconv"
 )
 
 type FieldElement struct {
@@ -81,9 +81,36 @@ func Mul(values ...FieldElement) FieldElement {
 }
 
 func (e *FieldElement) Pow(exp int) FieldElement {
-	num := int(math.Pow(float64(e.Num), float64(exp))) % e.Prime
+	// Fermat's Little Thereom 1=n^(n-1) mod p; where p is prime
+	// negative exponents can be made positive by a^-3 = a^-2 * a^(p-1) = a^(p-4)
+	// doing this repeatedly will turn the `exp` positive
+	exp = Mod(exp, e.Prime-1)
+
+	bigNum := new(big.Int).Exp(big.NewInt(int64(e.Num)), big.NewInt(int64(exp)), big.NewInt(int64(e.Prime)))
+	num, err := strconv.Atoi(bigNum.String())
+	if err != nil {
+		panic("Conversion from big.Int to int failed")
+	}
 
 	return FieldElement{Num: num, Prime: e.Prime}
+}
+
+// trick is to turn division into exponentiation a * a^-1 = 1
+// a^-1 = a^-1 * a^(p-1) mod p = a^(p-2) mod p
+func (e *FieldElement) Div(other FieldElement) FieldElement {
+	if !e.FieldEquals(other) {
+		panic("Cannot subtract two numbers in different Field")
+	}
+
+	// num := (e.Num * int(math.Pow(float64(other.Num), float64(other.Prime-2)))) % e.Prime
+
+	bigNum := new(big.Int).Exp(big.NewInt(int64(other.Num)), big.NewInt(int64(other.Prime-2)), big.NewInt(int64(other.Prime)))
+	fermatsInverse, err := strconv.Atoi(bigNum.String())
+	if err != nil {
+		panic("Conversion from big.Int to int failed")
+	}
+
+	return FieldElement{Num: (e.Num * fermatsInverse) % e.Prime, Prime: e.Prime}
 }
 
 func (e *FieldElement) FieldEquals(other FieldElement) bool {
