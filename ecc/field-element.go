@@ -99,7 +99,7 @@ func (e *FieldElement) Pow(exp int) FieldElement {
 // a^-1 = a^-1 * a^(p-1) mod p = a^(p-2) mod p
 func (e *FieldElement) Div(other FieldElement) FieldElement {
 	if !e.FieldEquals(other) {
-		panic("Cannot subtract two numbers in different Field")
+		panic("Cannot divide two numbers in different Field")
 	}
 
 	bigNum := new(big.Int).Exp(big.NewInt(int64(other.Num)), big.NewInt(int64(other.Prime-2)), big.NewInt(int64(other.Prime)))
