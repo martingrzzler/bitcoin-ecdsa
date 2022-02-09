@@ -102,8 +102,6 @@ func (e *FieldElement) Div(other FieldElement) FieldElement {
 		panic("Cannot subtract two numbers in different Field")
 	}
 
-	// num := (e.Num * int(math.Pow(float64(other.Num), float64(other.Prime-2)))) % e.Prime
-
 	bigNum := new(big.Int).Exp(big.NewInt(int64(other.Num)), big.NewInt(int64(other.Prime-2)), big.NewInt(int64(other.Prime)))
 	fermatsInverse, err := strconv.Atoi(bigNum.String())
 	if err != nil {
