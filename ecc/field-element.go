@@ -39,12 +39,28 @@ func (e *FieldElement) Add(other FieldElement) FieldElement {
 	return FieldElement{Num: num, Prime: e.Prime}
 }
 
+func Add(values ...FieldElement) FieldElement {
+	result := values[0]
+	for _, e := range values[1:] {
+		result = result.Add(e)
+	}
+	return result
+}
+
 func (e *FieldElement) Sub(other FieldElement) FieldElement {
 	if !e.FieldEquals(other) {
 		panic("Cannot subtract two numbers in different Field")
 	}
 	num := Mod((e.Num - other.Num), e.Prime)
 	return FieldElement{Num: num, Prime: e.Prime}
+}
+
+func Sub(values ...FieldElement) FieldElement {
+	result := values[0]
+	for _, e := range values[1:] {
+		result = result.Sub(e)
+	}
+	return result
 }
 
 func (e *FieldElement) FieldEquals(other FieldElement) bool {
