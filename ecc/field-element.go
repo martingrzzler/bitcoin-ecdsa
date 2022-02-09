@@ -2,6 +2,7 @@ package ecc
 
 import (
 	"fmt"
+	"math"
 	"math/big"
 )
 
@@ -61,6 +62,28 @@ func Sub(values ...FieldElement) FieldElement {
 		result = result.Sub(e)
 	}
 	return result
+}
+
+func (e *FieldElement) Mul(other FieldElement) FieldElement {
+	if !e.FieldEquals(other) {
+		panic("Cannot subtract two numbers in different Field")
+	}
+	num := Mod((e.Num * other.Num), e.Prime)
+	return FieldElement{Num: num, Prime: e.Prime}
+}
+
+func Mul(values ...FieldElement) FieldElement {
+	result := values[0]
+	for _, e := range values[1:] {
+		result = result.Mul(e)
+	}
+	return result
+}
+
+func (e *FieldElement) Pow(exp int) FieldElement {
+	num := int(math.Pow(float64(e.Num), float64(exp))) % e.Prime
+
+	return FieldElement{Num: num, Prime: e.Prime}
 }
 
 func (e *FieldElement) FieldEquals(other FieldElement) bool {

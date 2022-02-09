@@ -17,7 +17,6 @@ func TestAdd(t *testing.T) {
 		}
 	}
 }
-
 func TestAddMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(2, 5)},
@@ -32,7 +31,21 @@ func TestAddMulti(t *testing.T) {
 		}
 	}
 }
+func TestSub(t *testing.T) {
+	testCases := []struct{ x, y, want FieldElement }{
+		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(4, 5)},
+		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5)},
+		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(3, 11)},
+		{NewFieldElement(10, 11), NewFieldElement(6, 11), NewFieldElement(4, 11)},
+	}
 
+	for _, test := range testCases {
+		result := test.x.Sub(test.y)
+		if !result.Equals(test.want) {
+			t.Errorf("got %s, want %s", result.String(), &test.want)
+		}
+	}
+}
 func TestSubMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(4, 5)},
@@ -48,16 +61,48 @@ func TestSubMulti(t *testing.T) {
 	}
 }
 
-func TestSub(t *testing.T) {
+func TestMul(t *testing.T) {
 	testCases := []struct{ x, y, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(4, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(3, 11)},
-		{NewFieldElement(10, 11), NewFieldElement(6, 11), NewFieldElement(4, 11)},
+		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(2, 5)},
+		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(3, 5)},
+		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(9, 11)},
 	}
 
 	for _, test := range testCases {
-		result := test.x.Sub(test.y)
+		result := test.x.Mul(test.y)
+		if !result.Equals(test.want) {
+			t.Errorf("got %s, want %s", result.String(), &test.want)
+		}
+	}
+}
+
+func TestMulMulti(t *testing.T) {
+	testCases := []struct{ x, y, z, want FieldElement }{
+		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(0, 5)},
+		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5), NewFieldElement(1, 5)},
+		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(8, 11), NewFieldElement(6, 11)},
+	}
+
+	for _, test := range testCases {
+		result := Mul(test.x, test.y, test.z)
+		if !result.Equals(test.want) {
+			t.Errorf("got %s, want %s", result.String(), &test.want)
+		}
+	}
+}
+
+func TestPow(t *testing.T) {
+	testCases := []struct {
+		exp     int
+		x, want FieldElement
+	}{
+		{3, NewFieldElement(3, 5), NewFieldElement(2, 5)},
+		{6, NewFieldElement(2, 5), NewFieldElement(4, 5)},
+		{7, NewFieldElement(5, 11), NewFieldElement(3, 11)},
+	}
+
+	for _, test := range testCases {
+		result := test.x.Pow(test.exp)
 		if !result.Equals(test.want) {
 			t.Errorf("got %s, want %s", result.String(), &test.want)
 		}
