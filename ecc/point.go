@@ -12,7 +12,7 @@ type Point struct {
 
 func NewPoint(x, y, a, b float64) Point {
 	p := Point{X: x, Y: y, A: a, B: b}
-	if !p.IsOnCurve() {
+	if !p.OnCurve() {
 		errorMsg := fmt.Sprintf("(%.2f, %.2f) is not on %s", x, y, p.Curve())
 		panic(errorMsg)
 	}
@@ -24,7 +24,7 @@ func (p *Point) Equals(other Point) bool {
 	return p.X == other.X && p.Y == other.Y && p.A == other.A && p.B == other.B
 }
 
-func (p *Point) IsOnCurve() bool {
+func (p *Point) OnCurve() bool {
 	return math.Pow(p.Y, 2) == math.Pow(p.X, 3)+p.A*p.X+p.B
 }
 
