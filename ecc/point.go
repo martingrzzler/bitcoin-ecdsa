@@ -84,3 +84,7 @@ func (p *Point) Curve() string {
 
 	return fmt.Sprintf("y^2 = x^3 %s%s", ax, b)
 }
+
+func (p *Point) String() string {
+	return fmt.Sprintf("(%.2f, %.2f) on %s", p.X, p.Y, p.Curve())
+}

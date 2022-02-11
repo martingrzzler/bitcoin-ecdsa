@@ -2,7 +2,7 @@ package ecc
 
 import "testing"
 
-func TestAdd(t *testing.T) {
+func TestFieldElementAdd(t *testing.T) {
 	testCases := []struct{ x, y, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(2, 5)},
 		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(4, 5)},
@@ -17,7 +17,7 @@ func TestAdd(t *testing.T) {
 		}
 	}
 }
-func TestAddMulti(t *testing.T) {
+func TestFieldElementAddMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(2, 5)},
 		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5), NewFieldElement(1, 5)},
@@ -31,7 +31,7 @@ func TestAddMulti(t *testing.T) {
 		}
 	}
 }
-func TestSub(t *testing.T) {
+func TestFieldElementSub(t *testing.T) {
 	testCases := []struct{ x, y, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(4, 5)},
 		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5)},
@@ -61,7 +61,7 @@ func TestSubMulti(t *testing.T) {
 	}
 }
 
-func TestMul(t *testing.T) {
+func TestFieldElementMul(t *testing.T) {
 	testCases := []struct{ x, y, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(2, 5)},
 		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(3, 5)},
@@ -76,7 +76,7 @@ func TestMul(t *testing.T) {
 	}
 }
 
-func TestMulMulti(t *testing.T) {
+func TestFieldElementMulMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FieldElement }{
 		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(0, 5)},
 		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5), NewFieldElement(1, 5)},
@@ -91,7 +91,7 @@ func TestMulMulti(t *testing.T) {
 	}
 }
 
-func TestPow(t *testing.T) {
+func TestFieldElementPow(t *testing.T) {
 	testCases := []struct {
 		exp     int
 		x, want FieldElement
@@ -110,7 +110,7 @@ func TestPow(t *testing.T) {
 	}
 }
 
-func TestDiv(t *testing.T) {
+func TestFieldElementDiv(t *testing.T) {
 	testCases := []struct{ x, y, want FieldElement }{
 		{NewFieldElement(2, 19), NewFieldElement(7, 19), NewFieldElement(3, 19)},
 		{NewFieldElement(7, 19), NewFieldElement(5, 19), NewFieldElement(9, 19)},
