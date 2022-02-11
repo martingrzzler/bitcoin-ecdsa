@@ -47,10 +47,20 @@ func (p *Point) Add(other Point) Point {
 	if p.AdditiveInverse(other) {
 		return NewInfinityPoint(p.A, p.B)
 	}
-	// 2. points are not in a vertical line, but are different
-	// 3. the two points are the same
+	// 2. the two points are the same
+	if p.Equals(other) {
 
-	return *new(Point)
+	}
+	// 3. points are not in a vertical line, but are different
+	// s = (y2 - y1)/(x2 - x1)
+	// x3 = s^2 - x1 - x2
+	// y3 = s(x1 - x3) - y1
+	s := (other.Y - p.Y) / (other.X - p.X)
+	x3 := math.Pow(s, 2) - p.X - other.X
+	y3 := s*(p.X-x3) - p.Y
+
+	// TODO complete step 2 and 3
+	return Point{X: x3, Y: y3, A: p.A, B: p.B}
 }
 
 func (p *Point) Equals(other Point) bool {
@@ -86,5 +96,5 @@ func (p *Point) Curve() string {
 }
 
 func (p *Point) String() string {
-	return fmt.Sprintf("(%.2f, %.2f) on %s", p.X, p.Y, p.Curve())
+	return fmt.Sprintf("(%.2f, %.2f)", p.X, p.Y)
 }

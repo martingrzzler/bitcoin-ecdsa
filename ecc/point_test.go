@@ -25,15 +25,18 @@ func TestPointAddCase1(t *testing.T) {
 	testCases := []struct {
 		x, y, want Point
 	}{
+		// 1.  points are in a vertical line or using the identity point
 		{NewPoint(-1, -1, 5, 7), NewInfinityPoint(5, 7), NewPoint(-1, -1, 5, 7)},
 		{NewPoint(-1, 1, 5, 7), NewInfinityPoint(5, 7), NewPoint(-1, 1, 5, 7)},
 		{NewPoint(-1, -1, 5, 7), NewPoint(-1, 1, 5, 7), NewInfinityPoint(5, 7)},
+		// 3. points are not in a vertical line, but are different
+		{NewPoint(2, 5, 5, 7), NewPoint(-1, -1, 5, 7), NewPoint(3, -7, 5, 7)},
 	}
 
 	for _, test := range testCases {
 		result := test.x.Add(test.y)
 		if !result.Equals(test.want) {
-			t.Errorf("got for %s + %s, want %s", test.x.String(), test.y.String(), test.want.String())
+			t.Errorf("got for %s + %s = %s, want %s", test.x.String(), test.y.String(), result.String(), test.want.String())
 		}
 	}
 }
