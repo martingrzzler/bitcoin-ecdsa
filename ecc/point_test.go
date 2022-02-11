@@ -29,6 +29,8 @@ func TestPointAddCase1(t *testing.T) {
 		{NewPoint(-1, -1, 5, 7), NewInfinityPoint(5, 7), NewPoint(-1, -1, 5, 7)},
 		{NewPoint(-1, 1, 5, 7), NewInfinityPoint(5, 7), NewPoint(-1, 1, 5, 7)},
 		{NewPoint(-1, -1, 5, 7), NewPoint(-1, 1, 5, 7), NewInfinityPoint(5, 7)},
+		// 2. the two points are the same
+		{NewPoint(-1, -1, 5, 7), NewPoint(-1, -1, 5, 7), NewPoint(18, 77, 5, 7)},
 		// 3. points are not in a vertical line, but are different
 		{NewPoint(2, 5, 5, 7), NewPoint(-1, -1, 5, 7), NewPoint(3, -7, 5, 7)},
 	}

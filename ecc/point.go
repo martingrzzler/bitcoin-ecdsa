@@ -49,6 +49,13 @@ func (p *Point) Add(other Point) Point {
 	}
 	// 2. the two points are the same
 	if p.Equals(other) {
+		// s = (3x1^2 + a)/(2y1)
+		// x3 = s^2 - 2x1
+		// y3 = s(x1 - x3) - y1
+		s := (3*math.Pow(p.X, 2) + p.A) / (2 * p.Y)
+		x3 := math.Pow(s, 2) - 2*p.X
+		y3 := s*(p.X-x3) - p.Y
+		return Point{X: x3, Y: y3, A: p.A, B: p.B}
 
 	}
 	// 3. points are not in a vertical line, but are different
@@ -59,7 +66,6 @@ func (p *Point) Add(other Point) Point {
 	x3 := math.Pow(s, 2) - p.X - other.X
 	y3 := s*(p.X-x3) - p.Y
 
-	// TODO complete step 2 and 3
 	return Point{X: x3, Y: y3, A: p.A, B: p.B}
 }
 
