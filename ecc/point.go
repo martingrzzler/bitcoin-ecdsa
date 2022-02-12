@@ -49,6 +49,10 @@ func (p *Point) Add(other Point) Point {
 	}
 	// 2. the two points are the same
 	if p.Equals(other) {
+		// special case - tangent line is vertical
+		if p.Y == 0 {
+			return NewInfinityPoint(p.A, p.B)
+		}
 		// s = (3x1^2 + a)/(2y1)
 		// x3 = s^2 - 2x1
 		// y3 = s(x1 - x3) - y1
