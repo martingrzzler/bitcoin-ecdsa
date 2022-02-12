@@ -1,8 +1,10 @@
 package ecc
 
+import "math"
+
 // Modulus operations with negative numbers just return the negative number
-func Mod(x, y int) int {
-	return ((x % y) + y) % y
+func Mod(x, y float64) float64 {
+	return math.Mod((math.Mod(x, y) + y), y)
 }
 
 func IntPow(x, y int) int {

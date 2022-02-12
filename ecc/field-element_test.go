@@ -93,7 +93,7 @@ func TestFieldElementMulMulti(t *testing.T) {
 
 func TestFieldElementPow(t *testing.T) {
 	testCases := []struct {
-		exp     int
+		exp     float64
 		x, want FieldElement
 	}{
 		{3, NewFieldElement(3, 5), NewFieldElement(2, 5)},
