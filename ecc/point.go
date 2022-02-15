@@ -2,45 +2,44 @@ package ecc
 
 import (
 	"fmt"
-	"math"
 )
 
 // y^2=x^3+ax+b -> Bitcoin uses secp256k1 = y^2=x^3+7
 type Point struct {
-	X, Y, A, B float64
+	X, Y, A, B FieldElement
 }
 
-func NewPoint(x, y, a, b float64) Point {
+func NewPoint(x, y, a, b FieldElement) Point {
 	p := Point{X: x, Y: y, A: a, B: b}
 
-	if math.IsInf(p.X, 1) && math.IsInf(p.Y, 1) {
+	if p.X.Num == INFINITY && p.Y.Num == INFINITY {
 		return p
 	}
 
 	if !p.OnCurve() {
-		errorMsg := fmt.Sprintf("(%.2f, %.2f) is not on %s", x, y, p.Curve())
+		errorMsg := fmt.Sprintf("(%d, %d) is not on %s", x.Num, y.Num, p.Curve())
 		panic(errorMsg)
 	}
 
 	return p
 }
 
-func NewInfinityPoint(a, b float64) Point {
-	return Point{X: math.Inf(1), Y: math.Inf(1), A: a, B: b}
+func NewInfinityPoint(a, b FieldElement) Point {
+	return Point{X: NewFieldElement(INFINITY, a.Prime), Y: NewFieldElement(INFINITY, a.Prime), A: a, B: b}
 }
 
 func (p *Point) Add(other Point) Point {
 	// 1.  points are in a vertical line or using the identity point
 	if !p.OnSameCurve(other) {
-		errorMsg := fmt.Sprintf("(%.2f, %.2f) is not on %s", other.X, other.Y, p.Curve())
+		errorMsg := fmt.Sprintf("(%d, %d) is not on %s", other.X, other.Y, p.Curve())
 		panic(errorMsg)
 	}
 
-	if math.IsInf(p.X, 1) {
+	if p.X.Num == INFINITY {
 		return other
 	}
 
-	if math.IsInf(other.X, 1) {
+	if other.X.Num == INFINITY {
 		return *p
 	}
 
@@ -50,15 +49,15 @@ func (p *Point) Add(other Point) Point {
 	// 2. the two points are the same
 	if p.Equals(other) {
 		// special case - tangent line is vertical
-		if p.Y == 0 {
+		if p.Y.Num == 0 {
 			return NewInfinityPoint(p.A, p.B)
 		}
 		// s = (3x1^2 + a)/(2y1)
 		// x3 = s^2 - 2x1
 		// y3 = s(x1 - x3) - y1
-		s := (3*math.Pow(p.X, 2) + p.A) / (2 * p.Y)
-		x3 := math.Pow(s, 2) - 2*p.X
-		y3 := s*(p.X-x3) - p.Y
+		s := p.X.Pow(2).Mul(NewFieldElement(3, p.X.Prime)).Add(p.A).Div(NewFieldElement(2, p.X.Prime).Mul(p.Y))
+		x3 := s.Pow(2).Sub(NewFieldElement(2, p.X.Prime).Mul(p.X))
+		y3 := s.Mul(p.X.Sub(x3)).Sub(p.Y)
 		return Point{X: x3, Y: y3, A: p.A, B: p.B}
 
 	}
@@ -66,39 +65,41 @@ func (p *Point) Add(other Point) Point {
 	// s = (y2 - y1)/(x2 - x1)
 	// x3 = s^2 - x1 - x2
 	// y3 = s(x1 - x3) - y1
-	s := (other.Y - p.Y) / (other.X - p.X)
-	x3 := math.Pow(s, 2) - p.X - other.X
-	y3 := s*(p.X-x3) - p.Y
+	s := other.Y.Sub(p.Y).Div(other.X.Sub(p.X))
+	x3 := s.Pow(2).Sub(p.X).Sub(other.X)
+	y3 := s.Mul(p.X.Sub(x3)).Sub(p.Y)
 
 	return Point{X: x3, Y: y3, A: p.A, B: p.B}
 }
 
 func (p *Point) Equals(other Point) bool {
-	return p.X == other.X && p.Y == other.Y && p.A == other.A && p.B == other.B
+	return p.X.Equals(other.X) && p.Y.Equals(other.Y) && p.A.Equals(other.A) && p.B.Equals(other.B)
 }
 
 func (p *Point) OnCurve() bool {
-	return math.Pow(p.Y, 2) == math.Pow(p.X, 3)+p.A*p.X+p.B
+	left := p.Y.Pow(2)
+	right := Add(p.X.Pow(3), p.A.Mul(p.X), p.B)
+	return left.Equals(right)
 }
 
 func (p *Point) OnSameCurve(other Point) bool {
-	return p.A == other.A && p.B == p.B
+	return p.A.Equals(other.A) && p.B.Equals(other.B)
 }
 
 func (p *Point) AdditiveInverse(other Point) bool {
-	return p.X == other.X && p.Y != other.Y
+	return p.X.Equals(other.X) && !p.Y.Equals(other.Y)
 }
 
 func (p *Point) Curve() string {
-	b := fmt.Sprintf("+ %.2f", p.B)
-	if p.B == 0 {
+	b := fmt.Sprintf("+ %d", p.B.Num)
+	if p.B.Num == 0 {
 		b = ""
 	}
 
-	ax := fmt.Sprintf("+ %.2fx ", p.A)
-	if p.A == 0 {
+	ax := fmt.Sprintf("+ %dx ", p.A.Num)
+	if p.A.Num == 0 {
 		ax = ""
-	} else if p.A == 1 {
+	} else if p.A.Num == 1 {
 		ax = "+ x"
 	}
 
@@ -106,5 +107,5 @@ func (p *Point) Curve() string {
 }
 
 func (p *Point) String() string {
-	return fmt.Sprintf("(%.2f, %.2f)", p.X, p.Y)
+	return fmt.Sprintf("(%d, %d)", p.X.Num, p.Y.Num)
 }

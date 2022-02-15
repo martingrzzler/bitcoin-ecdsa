@@ -13,7 +13,7 @@ func TestFieldElementAdd(t *testing.T) {
 	for _, test := range testCases {
 		result := test.x.Add(test.y)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
@@ -27,7 +27,7 @@ func TestFieldElementAddMulti(t *testing.T) {
 	for _, test := range testCases {
 		result := Add(test.x, test.y, test.z)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
@@ -42,7 +42,7 @@ func TestFieldElementSub(t *testing.T) {
 	for _, test := range testCases {
 		result := test.x.Sub(test.y)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
@@ -56,7 +56,7 @@ func TestSubMulti(t *testing.T) {
 	for _, test := range testCases {
 		result := Sub(test.x, test.y, test.z)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
@@ -71,7 +71,7 @@ func TestFieldElementMul(t *testing.T) {
 	for _, test := range testCases {
 		result := test.x.Mul(test.y)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
@@ -86,14 +86,14 @@ func TestFieldElementMulMulti(t *testing.T) {
 	for _, test := range testCases {
 		result := Mul(test.x, test.y, test.z)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
 
 func TestFieldElementPow(t *testing.T) {
 	testCases := []struct {
-		exp     float64
+		exp     int64
 		x, want FieldElement
 	}{
 		{3, NewFieldElement(3, 5), NewFieldElement(2, 5)},
@@ -105,7 +105,7 @@ func TestFieldElementPow(t *testing.T) {
 	for _, test := range testCases {
 		result := test.x.Pow(test.exp)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
@@ -119,7 +119,7 @@ func TestFieldElementDiv(t *testing.T) {
 	for _, test := range testCases {
 		result := test.x.Div(test.y)
 		if !result.Equals(test.want) {
-			t.Errorf("got %s, want %s", result.String(), &test.want)
+			t.Errorf("got %s, want %s", result.String(), test.want)
 		}
 	}
 }
