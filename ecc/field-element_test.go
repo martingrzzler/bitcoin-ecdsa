@@ -3,11 +3,11 @@ package ecc
 import "testing"
 
 func TestFieldElementAdd(t *testing.T) {
-	testCases := []struct{ x, y, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(2, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(4, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(10, 11)},
-		{NewFieldElement(5, 11), NewFieldElement(6, 11), NewFieldElement(0, 11)},
+	testCases := []struct{ x, y, want FE }{
+		{NewFE(3, 5), NewFE(4, 5), NewFE(2, 5)},
+		{NewFE(3, 5), NewFE(1, 5), NewFE(4, 5)},
+		{NewFE(1, 11), NewFE(9, 11), NewFE(10, 11)},
+		{NewFE(5, 11), NewFE(6, 11), NewFE(0, 11)},
 	}
 
 	for _, test := range testCases {
@@ -18,10 +18,10 @@ func TestFieldElementAdd(t *testing.T) {
 	}
 }
 func TestFieldElementAddMulti(t *testing.T) {
-	testCases := []struct{ x, y, z, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(2, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5), NewFieldElement(1, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(8, 11), NewFieldElement(7, 11)},
+	testCases := []struct{ x, y, z, want FE }{
+		{NewFE(3, 5), NewFE(4, 5), NewFE(0, 5), NewFE(2, 5)},
+		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5), NewFE(1, 5)},
+		{NewFE(1, 11), NewFE(9, 11), NewFE(8, 11), NewFE(7, 11)},
 	}
 
 	for _, test := range testCases {
@@ -32,11 +32,11 @@ func TestFieldElementAddMulti(t *testing.T) {
 	}
 }
 func TestFieldElementSub(t *testing.T) {
-	testCases := []struct{ x, y, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(4, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(3, 11)},
-		{NewFieldElement(10, 11), NewFieldElement(6, 11), NewFieldElement(4, 11)},
+	testCases := []struct{ x, y, want FE }{
+		{NewFE(3, 5), NewFE(4, 5), NewFE(4, 5)},
+		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5)},
+		{NewFE(1, 11), NewFE(9, 11), NewFE(3, 11)},
+		{NewFE(10, 11), NewFE(6, 11), NewFE(4, 11)},
 	}
 
 	for _, test := range testCases {
@@ -47,10 +47,10 @@ func TestFieldElementSub(t *testing.T) {
 	}
 }
 func TestSubMulti(t *testing.T) {
-	testCases := []struct{ x, y, z, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(4, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5), NewFieldElement(0, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(8, 11), NewFieldElement(6, 11)},
+	testCases := []struct{ x, y, z, want FE }{
+		{NewFE(3, 5), NewFE(4, 5), NewFE(0, 5), NewFE(4, 5)},
+		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5), NewFE(0, 5)},
+		{NewFE(1, 11), NewFE(9, 11), NewFE(8, 11), NewFE(6, 11)},
 	}
 
 	for _, test := range testCases {
@@ -62,10 +62,10 @@ func TestSubMulti(t *testing.T) {
 }
 
 func TestFieldElementMul(t *testing.T) {
-	testCases := []struct{ x, y, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(2, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(3, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(9, 11)},
+	testCases := []struct{ x, y, want FE }{
+		{NewFE(3, 5), NewFE(4, 5), NewFE(2, 5)},
+		{NewFE(3, 5), NewFE(1, 5), NewFE(3, 5)},
+		{NewFE(1, 11), NewFE(9, 11), NewFE(9, 11)},
 	}
 
 	for _, test := range testCases {
@@ -77,10 +77,10 @@ func TestFieldElementMul(t *testing.T) {
 }
 
 func TestFieldElementMulMulti(t *testing.T) {
-	testCases := []struct{ x, y, z, want FieldElement }{
-		{NewFieldElement(3, 5), NewFieldElement(4, 5), NewFieldElement(0, 5), NewFieldElement(0, 5)},
-		{NewFieldElement(3, 5), NewFieldElement(1, 5), NewFieldElement(2, 5), NewFieldElement(1, 5)},
-		{NewFieldElement(1, 11), NewFieldElement(9, 11), NewFieldElement(8, 11), NewFieldElement(6, 11)},
+	testCases := []struct{ x, y, z, want FE }{
+		{NewFE(3, 5), NewFE(4, 5), NewFE(0, 5), NewFE(0, 5)},
+		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5), NewFE(1, 5)},
+		{NewFE(1, 11), NewFE(9, 11), NewFE(8, 11), NewFE(6, 11)},
 	}
 
 	for _, test := range testCases {
@@ -94,12 +94,12 @@ func TestFieldElementMulMulti(t *testing.T) {
 func TestFieldElementPow(t *testing.T) {
 	testCases := []struct {
 		exp     int64
-		x, want FieldElement
+		x, want FE
 	}{
-		{3, NewFieldElement(3, 5), NewFieldElement(2, 5)},
-		{6, NewFieldElement(2, 5), NewFieldElement(4, 5)},
-		{7, NewFieldElement(5, 11), NewFieldElement(3, 11)},
-		{-3, NewFieldElement(7, 13), NewFieldElement(8, 13)},
+		{3, NewFE(3, 5), NewFE(2, 5)},
+		{6, NewFE(2, 5), NewFE(4, 5)},
+		{7, NewFE(5, 11), NewFE(3, 11)},
+		{-3, NewFE(7, 13), NewFE(8, 13)},
 	}
 
 	for _, test := range testCases {
@@ -111,9 +111,9 @@ func TestFieldElementPow(t *testing.T) {
 }
 
 func TestFieldElementDiv(t *testing.T) {
-	testCases := []struct{ x, y, want FieldElement }{
-		{NewFieldElement(2, 19), NewFieldElement(7, 19), NewFieldElement(3, 19)},
-		{NewFieldElement(7, 19), NewFieldElement(5, 19), NewFieldElement(9, 19)},
+	testCases := []struct{ x, y, want FE }{
+		{NewFE(2, 19), NewFE(7, 19), NewFE(3, 19)},
+		{NewFE(7, 19), NewFE(5, 19), NewFE(9, 19)},
 	}
 
 	for _, test := range testCases {

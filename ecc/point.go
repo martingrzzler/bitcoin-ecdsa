@@ -6,10 +6,10 @@ import (
 
 // y^2=x^3+ax+b -> Bitcoin uses secp256k1 = y^2=x^3+7
 type Point struct {
-	X, Y, A, B FieldElement
+	X, Y, A, B FE
 }
 
-func NewPoint(x, y, a, b FieldElement) Point {
+func NewPoint(x, y, a, b FE) Point {
 	p := Point{X: x, Y: y, A: a, B: b}
 
 	if p.X.Num == INFINITY && p.Y.Num == INFINITY {
@@ -24,8 +24,8 @@ func NewPoint(x, y, a, b FieldElement) Point {
 	return p
 }
 
-func NewInfinityPoint(a, b FieldElement) Point {
-	return Point{X: NewFieldElement(INFINITY, a.Prime), Y: NewFieldElement(INFINITY, a.Prime), A: a, B: b}
+func NewInfinityPoint(a, b FE) Point {
+	return Point{X: NewFE(INFINITY, a.Prime), Y: NewFE(INFINITY, a.Prime), A: a, B: b}
 }
 
 func (p *Point) Add(other Point) Point {
@@ -55,8 +55,8 @@ func (p *Point) Add(other Point) Point {
 		// s = (3x1^2 + a)/(2y1)
 		// x3 = s^2 - 2x1
 		// y3 = s(x1 - x3) - y1
-		s := p.X.Pow(2).Mul(NewFieldElement(3, p.X.Prime)).Add(p.A).Div(NewFieldElement(2, p.X.Prime).Mul(p.Y))
-		x3 := s.Pow(2).Sub(NewFieldElement(2, p.X.Prime).Mul(p.X))
+		s := p.X.Pow(2).Mul(NewFE(3, p.X.Prime)).Add(p.A).Div(NewFE(2, p.X.Prime).Mul(p.Y))
+		x3 := s.Pow(2).Sub(NewFE(2, p.X.Prime).Mul(p.X))
 		y3 := s.Mul(p.X.Sub(x3)).Sub(p.Y)
 		return Point{X: x3, Y: y3, A: p.A, B: p.B}
 

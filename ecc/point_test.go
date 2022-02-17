@@ -4,13 +4,13 @@ import "testing"
 
 func TestPointIsOnCurve(t *testing.T) {
 	var prime int64 = 223
-	a := NewFieldElement(0, prime)
-	b := NewFieldElement(7, prime)
+	a := NewFE(0, prime)
+	b := NewFE(7, prime)
 	testCases := []struct {
-		x, y FieldElement
+		x, y FE
 		want bool
 	}{
-		{NewFieldElement(192, prime), NewFieldElement(105, prime), true},
+		{NewFE(192, prime), NewFE(105, prime), true},
 	}
 
 	for _, test := range testCases {
@@ -23,22 +23,14 @@ func TestPointIsOnCurve(t *testing.T) {
 
 func TestPointAdd(t *testing.T) {
 	var prime int64 = 223
-	a := NewFieldElement(0, prime)
-	b := NewFieldElement(7, prime)
+	a := NewFE(0, prime)
+	b := NewFE(7, prime)
 	testCases := []struct {
 		x, y, want Point
 	}{
-		{NewPoint(NewFieldElement(170, prime), NewFieldElement(142, prime), a, b), NewPoint(NewFieldElement(60, prime), NewFieldElement(139, prime), a, b), NewPoint(NewFieldElement(220, prime), NewFieldElement(181, prime), a, b)},
-		// 1.  points are in a vertical line or using the identity point
-		// {NewPoint(-1, -1, 5, 7), NewInfinityPoint(5, 7), NewPoint(-1, -1, 5, 7)},
-		// {NewPoint(-1, 1, 5, 7), NewInfinityPoint(5, 7), NewPoint(-1, 1, 5, 7)},
-		// {NewPoint(-1, -1, 5, 7), NewPoint(-1, 1, 5, 7), NewInfinityPoint(5, 7)},
-		// // 2. the two points are the same
-		// {NewPoint(-1, -1, 5, 7), NewPoint(-1, -1, 5, 7), NewPoint(18, 77, 5, 7)},
-		// //    special case - tangent line is vertical; y=0
-		// {NewPoint(-1, -1, 5, 7), NewPoint(-1, -1, 5, 7), NewInfinityPoint(5, 7)},
-		// // 3. points are not in a vertical line, but are different
-		// {NewPoint(2, 5, 5, 7), NewPoint(-1, -1, 5, 7), NewPoint(3, -7, 5, 7)},
+		{NewPoint(NewFE(170, prime), NewFE(142, prime), a, b), NewPoint(NewFE(60, prime), NewFE(139, prime), a, b), NewPoint(NewFE(220, prime), NewFE(181, prime), a, b)},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewPoint(NewFE(17, prime), NewFE(56, prime), a, b), NewPoint(NewFE(215, prime), NewFE(68, prime), a, b)},
+		{NewPoint(NewFE(143, prime), NewFE(98, prime), a, b), NewPoint(NewFE(76, prime), NewFE(66, prime), a, b), NewPoint(NewFE(47, prime), NewFE(71, prime), a, b)},
 	}
 
 	for _, test := range testCases {
