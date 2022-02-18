@@ -28,6 +28,21 @@ func NewInfinityPoint(a, b FE) Point {
 	return Point{X: NewFE(INFINITY, a.Prime), Y: NewFE(INFINITY, a.Prime), A: a, B: b}
 }
 
+func (p *Point) Scale(coefficient int) Point {
+	coeff := coefficient
+	current := *p
+	result := NewInfinityPoint(p.A, p.B)
+
+	for coeff != 0 {
+		if coeff&1 != 0 {
+			result = result.Add(current)
+		}
+		current = current.Add(current)
+		coeff >>= 1
+	}
+	return result
+}
+
 func (p *Point) Add(other Point) Point {
 	// 1.  points are in a vertical line or using the identity point
 	if !p.OnSameCurve(other) {

@@ -89,3 +89,28 @@ func TestAddToItself(t *testing.T) {
 	}
 
 }
+func TestScale(t *testing.T) {
+	var prime int64 = 223
+	a := NewFE(0, prime)
+	b := NewFE(7, prime)
+	testCases := []struct {
+		point, want Point
+		coefficient int
+	}{
+		{NewPoint(NewFE(192, prime), NewFE(105, prime), a, b), NewPoint(NewFE(49, prime), NewFE(71, prime), a, b), 2},
+		{NewPoint(NewFE(143, prime), NewFE(98, prime), a, b), NewPoint(NewFE(64, prime), NewFE(168, prime), a, b), 2},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewPoint(NewFE(194, prime), NewFE(51, prime), a, b), 4},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewPoint(NewFE(116, prime), NewFE(55, prime), a, b), 8},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewInfinityPoint(a, b), 21},
+		{NewPoint(NewFE(15, prime), NewFE(86, prime), a, b), NewInfinityPoint(a, b), 7},
+	}
+
+	for _, test := range testCases {
+		result := test.point.Scale(test.coefficient)
+		if !result.Equals(test.want) {
+			t.Errorf("got for %d * %s = %s, want %s", test.coefficient, test.point.String(), result.String(), test.want.String())
+		}
+
+	}
+
+}
