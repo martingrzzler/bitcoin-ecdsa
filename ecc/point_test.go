@@ -40,3 +40,52 @@ func TestPointAdd(t *testing.T) {
 		}
 	}
 }
+
+func TestPointEquals(t *testing.T) {
+	var prime int64 = 223
+	a := NewFE(0, prime)
+	b := NewFE(7, prime)
+	testCases := []struct {
+		x, y Point
+		want bool
+	}{
+		{NewInfinityPoint(a, b), NewInfinityPoint(a, b), true},
+	}
+
+	for _, test := range testCases {
+		result := test.x.Equals(test.y)
+		if !result == test.want {
+			t.Errorf("got for %s + %s = %t, want %t", test.x.String(), test.y.String(), result, test.want)
+		}
+	}
+
+}
+
+func TestAddToItself(t *testing.T) {
+	var prime int64 = 223
+	a := NewFE(0, prime)
+	b := NewFE(7, prime)
+	testCases := []struct {
+		point, want Point
+		scalar      int
+	}{
+		{NewPoint(NewFE(192, prime), NewFE(105, prime), a, b), NewPoint(NewFE(49, prime), NewFE(71, prime), a, b), 2},
+		{NewPoint(NewFE(143, prime), NewFE(98, prime), a, b), NewPoint(NewFE(64, prime), NewFE(168, prime), a, b), 2},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewPoint(NewFE(194, prime), NewFE(51, prime), a, b), 4},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewPoint(NewFE(116, prime), NewFE(55, prime), a, b), 8},
+		{NewPoint(NewFE(47, prime), NewFE(71, prime), a, b), NewInfinityPoint(a, b), 21},
+		{NewPoint(NewFE(15, prime), NewFE(86, prime), a, b), NewInfinityPoint(a, b), 7},
+	}
+
+	for _, test := range testCases {
+		result := test.point.Add(test.point)
+		for i := 2; i < test.scalar; i++ {
+			result = result.Add(test.point)
+		}
+		if !result.Equals(test.want) {
+			t.Errorf("got for %d * %s = %s, want %s", test.scalar, test.point.String(), result.String(), test.want.String())
+		}
+
+	}
+
+}

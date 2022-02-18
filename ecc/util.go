@@ -2,7 +2,7 @@ package ecc
 
 import "math"
 
-var INFINITY int64 = int64(math.Inf(1))
+var INFINITY int64 = ^int64(math.Inf(1))
 
 // Modulus operations with negative numbers just return the negative number
 func Mod(x, y int64) int64 {

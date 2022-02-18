@@ -16,7 +16,7 @@ func NewFE(num int64, prime int64) FE {
 		errorMsg := fmt.Sprintf("%d is probably not prime", prime)
 		panic(errorMsg)
 	}
-	if num >= prime || num < 0 {
+	if (num >= prime || num < 0) && (num != INFINITY) {
 		errorMsg := fmt.Sprintf("Num %d not in field range 0 to %d", num, prime)
 		panic(errorMsg)
 	}
