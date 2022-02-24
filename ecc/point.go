@@ -29,17 +29,17 @@ func NewInfinityPoint(a, b FE) Point {
 	return Point{X: NewFE(INFINITY, a.Prime), Y: NewFE(INFINITY, a.Prime), A: a, B: b}
 }
 
-func (p *Point) Scale(coefficient int) Point {
+func (p *Point) Scale(coefficient *big.Int) Point {
 	coeff := coefficient
 	current := *p
 	result := NewInfinityPoint(p.A, p.B)
 
-	for coeff != 0 {
-		if coeff&1 != 0 {
+	for coeff.Cmp(big.NewInt(0)) != 0 {
+		if new(big.Int).And(coeff, big.NewInt(1)).Cmp(big.NewInt(0)) != 0 {
 			result = result.Add(current)
 		}
 		current = current.Add(current)
-		coeff >>= 1
+		coeff.Rsh(coeff, 1)
 	}
 	return result
 }

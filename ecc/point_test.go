@@ -98,14 +98,14 @@ func TestScale(t *testing.T) {
 	b := NewFE(big.NewInt(7), prime)
 	testCases := []struct {
 		point, want Point
-		coefficient int
+		coefficient *big.Int
 	}{
-		{NewPoint(NewFE(big.NewInt(192), prime), NewFE(big.NewInt(105), prime), a, b), NewPoint(NewFE(big.NewInt(49), prime), NewFE(big.NewInt(71), prime), a, b), 2},
-		{NewPoint(NewFE(big.NewInt(143), prime), NewFE(big.NewInt(98), prime), a, b), NewPoint(NewFE(big.NewInt(64), prime), NewFE(big.NewInt(168), prime), a, b), 2},
-		{NewPoint(NewFE(big.NewInt(47), prime), NewFE(big.NewInt(71), prime), a, b), NewPoint(NewFE(big.NewInt(194), prime), NewFE(big.NewInt(51), prime), a, b), 4},
-		{NewPoint(NewFE(big.NewInt(47), prime), NewFE(big.NewInt(71), prime), a, b), NewPoint(NewFE(big.NewInt(116), prime), NewFE(big.NewInt(55), prime), a, b), 8},
-		{NewPoint(NewFE(big.NewInt(47), prime), NewFE(big.NewInt(71), prime), a, b), NewInfinityPoint(a, b), 21},
-		{NewPoint(NewFE(big.NewInt(15), prime), NewFE(big.NewInt(86), prime), a, b), NewInfinityPoint(a, b), 7},
+		{NewPoint(NewFE(big.NewInt(192), prime), NewFE(big.NewInt(105), prime), a, b), NewPoint(NewFE(big.NewInt(49), prime), NewFE(big.NewInt(71), prime), a, b), big.NewInt(2)},
+		{NewPoint(NewFE(big.NewInt(143), prime), NewFE(big.NewInt(98), prime), a, b), NewPoint(NewFE(big.NewInt(64), prime), NewFE(big.NewInt(168), prime), a, b), big.NewInt(2)},
+		{NewPoint(NewFE(big.NewInt(47), prime), NewFE(big.NewInt(71), prime), a, b), NewPoint(NewFE(big.NewInt(194), prime), NewFE(big.NewInt(51), prime), a, b), big.NewInt(4)},
+		{NewPoint(NewFE(big.NewInt(47), prime), NewFE(big.NewInt(71), prime), a, b), NewPoint(NewFE(big.NewInt(116), prime), NewFE(big.NewInt(55), prime), a, b), big.NewInt(8)},
+		{NewPoint(NewFE(big.NewInt(47), prime), NewFE(big.NewInt(71), prime), a, b), NewInfinityPoint(a, b), big.NewInt(21)},
+		{NewPoint(NewFE(big.NewInt(15), prime), NewFE(big.NewInt(86), prime), a, b), NewInfinityPoint(a, b), big.NewInt(7)},
 	}
 
 	for _, test := range testCases {
@@ -116,4 +116,36 @@ func TestScale(t *testing.T) {
 
 	}
 
+}
+
+func TestSec256k1GeneratorPoint(t *testing.T) {
+	gx, ok := new(big.Int).SetString("0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", 0)
+	if !ok {
+		t.Errorf("failed to initialize gx")
+	}
+	gy, ok := new(big.Int).SetString("0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8", 0)
+	if !ok {
+		t.Errorf("failed to initialize gy")
+	}
+	p, ok := new(big.Int).SetString("0xfffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f", 0)
+	if !ok {
+		t.Errorf("failed to initialize p")
+	}
+
+	n, ok := new(big.Int).SetString("0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", 0)
+	if !ok {
+		t.Errorf("failed to initialize n (order)")
+	}
+
+	a := NewFE(new(big.Int), p)
+	b := NewFE(big.NewInt(7), p)
+
+	point := NewPoint(NewFE(gx, p), NewFE(gy, p), a, b)
+	if !point.OnCurve() {
+		t.Errorf("Generator point is not on curve")
+	}
+
+	if point.Scale(n) != NewInfinityPoint(a, b) {
+		t.Errorf("Expected infinity point")
+	}
 }
