@@ -17,7 +17,7 @@ func TestPointIsOnCurve(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		p := Point{test.x, test.y, a, b}
+		p := point{test.x, test.y, a, b}
 		if p.OnCurve() != test.want {
 			t.Errorf("got for %s %t, want %t", p.String(), p.OnCurve(), test.want)
 		}
