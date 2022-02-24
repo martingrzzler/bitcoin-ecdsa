@@ -7,17 +7,18 @@ import (
 
 // Field Element
 type FE struct {
-	Num   int64
-	Prime int64
+	Num   *big.Int
+	Prime *big.Int
 }
 
-func NewFE(num int64, prime int64) FE {
-	if !big.NewInt(int64(prime)).ProbablyPrime(0) {
-		errorMsg := fmt.Sprintf("%d is probably not prime", prime)
+func NewFE(num *big.Int, prime *big.Int) FE {
+	if !prime.ProbablyPrime(0) {
+		errorMsg := fmt.Sprintf("0x%x is probably not prime", prime)
 		panic(errorMsg)
 	}
-	if (num >= prime || num < 0) && (num != INFINITY) {
-		errorMsg := fmt.Sprintf("Num %d not in field range 0 to %d", num, prime)
+
+	if (num.Cmp(prime) >= 0 || num.Cmp(new(big.Int)) < 0) && (num.Cmp(INFINITY) != 0) {
+		errorMsg := fmt.Sprintf("Num 0x%x not in field range 0 to 0x%x", num, prime)
 		panic(errorMsg)
 	}
 
@@ -25,18 +26,20 @@ func NewFE(num int64, prime int64) FE {
 }
 
 func (e FE) String() string {
-	return fmt.Sprintf("FieldElement_%d(%d)", e.Prime, e.Num)
+	return fmt.Sprintf("FieldElement_0x%x(0x%x)", e.Prime, e.Num)
 }
 
 func (e FE) Equals(other FE) bool {
-	return e.Num == other.Num && e.Prime == other.Prime
+	return e.Num.Cmp(other.Num) == 0 && e.Prime.Cmp(other.Prime) == 0
 }
 
 func (e FE) Add(other FE) FE {
 	if !e.FieldEquals(other) {
 		panic("Cannot add two numbers in different Field")
 	}
-	num := Mod((e.Num + other.Num), e.Prime)
+	num := new(big.Int).Add(e.Num, other.Num)
+	num = num.Mod(num, e.Prime)
+
 	return FE{Num: num, Prime: e.Prime}
 }
 
@@ -52,7 +55,8 @@ func (e FE) Sub(other FE) FE {
 	if !e.FieldEquals(other) {
 		panic("Cannot subtract two numbers in different Field")
 	}
-	num := Mod((e.Num - other.Num), e.Prime)
+	num := new(big.Int).Sub(e.Num, other.Num)
+	num = num.Mod(num, e.Prime)
 	return FE{Num: num, Prime: e.Prime}
 }
 
@@ -66,9 +70,10 @@ func Sub(values ...FE) FE {
 
 func (e FE) Mul(other FE) FE {
 	if !e.FieldEquals(other) {
-		panic("Cannot subtract two numbers in different Field")
+		panic("Cannot multiply two numbers in different Field")
 	}
-	num := Mod((e.Num * other.Num), e.Prime)
+	num := new(big.Int).Mul(e.Num, other.Num)
+	num = num.Mod(num, e.Prime)
 	return FE{Num: num, Prime: e.Prime}
 }
 
@@ -80,13 +85,13 @@ func Mul(values ...FE) FE {
 	return result
 }
 
-func (e FE) Pow(exp int64) FE {
+func (e FE) Pow(exp *big.Int) FE {
 	// Fermat's Little Thereom 1=n^(n-1) mod p; where p is prime
 	// negative exponents can be made positive by a^-3 = a^-2 * a^(p-1) = a^(p-4)
 	// doing this repeatedly will turn the `exp` positive
-	exp = Mod(exp, e.Prime-1)
+	exp = exp.Mod(exp, new(big.Int).Sub(e.Prime, big.NewInt(1)))
 
-	num := ModPow(e.Num, exp, e.Prime)
+	num := new(big.Int).Exp(e.Num, exp, e.Prime)
 
 	return FE{Num: num, Prime: e.Prime}
 }
@@ -98,11 +103,16 @@ func (e FE) Div(other FE) FE {
 		panic("Cannot divide two numbers in different Field")
 	}
 
-	fermatsInverse := ModPow(other.Num, other.Prime-2, other.Prime)
+	fermatsInverse := new(big.Int).Exp(other.Num, new(big.Int).Sub(other.Prime, big.NewInt(2)), other.Prime)
+	num := new(big.Int).Mul(e.Num, fermatsInverse)
+	num = num.Mod(num, e.Prime)
 
-	return FE{Num: Mod((e.Num * fermatsInverse), e.Prime), Prime: e.Prime}
+	return FE{Num: num, Prime: e.Prime}
 }
 
 func (e FE) FieldEquals(other FE) bool {
-	return e.Prime == other.Prime
+	return e.Prime.Cmp(other.Prime) == 0
+}
+func (e FE) IsZero() bool {
+	return e.Num.Cmp(big.NewInt(0)) == 0
 }

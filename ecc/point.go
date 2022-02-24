@@ -2,6 +2,7 @@ package ecc
 
 import (
 	"fmt"
+	"math/big"
 )
 
 // y^2=x^3+ax+b -> Bitcoin uses secp256k1 = y^2=x^3+7
@@ -64,14 +65,14 @@ func (p *Point) Add(other Point) Point {
 	// 2. the two points are the same
 	if p.Equals(other) {
 		// special case - tangent line is vertical
-		if p.Y.Num == 0 {
+		if p.Y.IsZero() {
 			return NewInfinityPoint(p.A, p.B)
 		}
 		// s = (3x1^2 + a)/(2y1)
 		// x3 = s^2 - 2x1
 		// y3 = s(x1 - x3) - y1
-		s := p.X.Pow(2).Mul(NewFE(3, p.X.Prime)).Add(p.A).Div(NewFE(2, p.X.Prime).Mul(p.Y))
-		x3 := s.Pow(2).Sub(NewFE(2, p.X.Prime).Mul(p.X))
+		s := p.X.Pow(big.NewInt(2)).Mul(NewFE(big.NewInt(3), p.X.Prime)).Add(p.A).Div(NewFE(big.NewInt(2), p.X.Prime).Mul(p.Y))
+		x3 := s.Pow(big.NewInt(2)).Sub(NewFE(big.NewInt(2), p.X.Prime).Mul(p.X))
 		y3 := s.Mul(p.X.Sub(x3)).Sub(p.Y)
 		return Point{X: x3, Y: y3, A: p.A, B: p.B}
 
@@ -81,7 +82,7 @@ func (p *Point) Add(other Point) Point {
 	// x3 = s^2 - x1 - x2
 	// y3 = s(x1 - x3) - y1
 	s := other.Y.Sub(p.Y).Div(other.X.Sub(p.X))
-	x3 := s.Pow(2).Sub(p.X).Sub(other.X)
+	x3 := s.Pow(big.NewInt(2)).Sub(p.X).Sub(other.X)
 	y3 := s.Mul(p.X.Sub(x3)).Sub(p.Y)
 
 	return Point{X: x3, Y: y3, A: p.A, B: p.B}
@@ -92,8 +93,8 @@ func (p *Point) Equals(other Point) bool {
 }
 
 func (p *Point) OnCurve() bool {
-	left := p.Y.Pow(2)
-	right := Add(p.X.Pow(3), p.A.Mul(p.X), p.B)
+	left := p.Y.Pow(big.NewInt(2))
+	right := Add(p.X.Pow(big.NewInt(3)), p.A.Mul(p.X), p.B)
 	return left.Equals(right)
 }
 
@@ -107,14 +108,14 @@ func (p *Point) AdditiveInverse(other Point) bool {
 
 func (p *Point) Curve() string {
 	b := fmt.Sprintf("+ %d", p.B.Num)
-	if p.B.Num == 0 {
+	if p.B.IsZero() {
 		b = ""
 	}
 
 	ax := fmt.Sprintf("+ %dx ", p.A.Num)
-	if p.A.Num == 0 {
+	if p.A.IsZero() {
 		ax = ""
-	} else if p.A.Num == 1 {
+	} else if p.A.Num.Cmp(big.NewInt(1)) == 0 {
 		ax = "+ x"
 	}
 

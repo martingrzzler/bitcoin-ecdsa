@@ -1,13 +1,16 @@
 package ecc
 
-import "testing"
+import (
+	"math/big"
+	"testing"
+)
 
 func TestFieldElementAdd(t *testing.T) {
 	testCases := []struct{ x, y, want FE }{
-		{NewFE(3, 5), NewFE(4, 5), NewFE(2, 5)},
-		{NewFE(3, 5), NewFE(1, 5), NewFE(4, 5)},
-		{NewFE(1, 11), NewFE(9, 11), NewFE(10, 11)},
-		{NewFE(5, 11), NewFE(6, 11), NewFE(0, 11)},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5))},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5))},
+		{NewFE(big.NewInt(1), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11)), NewFE(big.NewInt(10), big.NewInt(11))},
+		{NewFE(big.NewInt(5), big.NewInt(11)), NewFE(big.NewInt(6), big.NewInt(11)), NewFE(big.NewInt(0), big.NewInt(11))},
 	}
 
 	for _, test := range testCases {
@@ -19,9 +22,9 @@ func TestFieldElementAdd(t *testing.T) {
 }
 func TestFieldElementAddMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FE }{
-		{NewFE(3, 5), NewFE(4, 5), NewFE(0, 5), NewFE(2, 5)},
-		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5), NewFE(1, 5)},
-		{NewFE(1, 11), NewFE(9, 11), NewFE(8, 11), NewFE(7, 11)},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5)), NewFE(big.NewInt(0), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5))},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5))},
+		{NewFE(big.NewInt(1), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11)), NewFE(big.NewInt(8), big.NewInt(11)), NewFE(big.NewInt(7), big.NewInt(11))},
 	}
 
 	for _, test := range testCases {
@@ -33,10 +36,10 @@ func TestFieldElementAddMulti(t *testing.T) {
 }
 func TestFieldElementSub(t *testing.T) {
 	testCases := []struct{ x, y, want FE }{
-		{NewFE(3, 5), NewFE(4, 5), NewFE(4, 5)},
-		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5)},
-		{NewFE(1, 11), NewFE(9, 11), NewFE(3, 11)},
-		{NewFE(10, 11), NewFE(6, 11), NewFE(4, 11)},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5))},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5))},
+		{NewFE(big.NewInt(1), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11)), NewFE(big.NewInt(3), big.NewInt(11))},
+		{NewFE(big.NewInt(10), big.NewInt(11)), NewFE(big.NewInt(6), big.NewInt(11)), NewFE(big.NewInt(4), big.NewInt(11))},
 	}
 
 	for _, test := range testCases {
@@ -48,9 +51,9 @@ func TestFieldElementSub(t *testing.T) {
 }
 func TestSubMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FE }{
-		{NewFE(3, 5), NewFE(4, 5), NewFE(0, 5), NewFE(4, 5)},
-		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5), NewFE(0, 5)},
-		{NewFE(1, 11), NewFE(9, 11), NewFE(8, 11), NewFE(6, 11)},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5)), NewFE(big.NewInt(0), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5))},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5)), NewFE(big.NewInt(0), big.NewInt(5))},
+		{NewFE(big.NewInt(1), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11)), NewFE(big.NewInt(8), big.NewInt(11)), NewFE(big.NewInt(6), big.NewInt(11))},
 	}
 
 	for _, test := range testCases {
@@ -63,9 +66,9 @@ func TestSubMulti(t *testing.T) {
 
 func TestFieldElementMul(t *testing.T) {
 	testCases := []struct{ x, y, want FE }{
-		{NewFE(3, 5), NewFE(4, 5), NewFE(2, 5)},
-		{NewFE(3, 5), NewFE(1, 5), NewFE(3, 5)},
-		{NewFE(1, 11), NewFE(9, 11), NewFE(9, 11)},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5))},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5)), NewFE(big.NewInt(3), big.NewInt(5))},
+		{NewFE(big.NewInt(1), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11))},
 	}
 
 	for _, test := range testCases {
@@ -78,9 +81,9 @@ func TestFieldElementMul(t *testing.T) {
 
 func TestFieldElementMulMulti(t *testing.T) {
 	testCases := []struct{ x, y, z, want FE }{
-		{NewFE(3, 5), NewFE(4, 5), NewFE(0, 5), NewFE(0, 5)},
-		{NewFE(3, 5), NewFE(1, 5), NewFE(2, 5), NewFE(1, 5)},
-		{NewFE(1, 11), NewFE(9, 11), NewFE(8, 11), NewFE(6, 11)},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5)), NewFE(big.NewInt(0), big.NewInt(5)), NewFE(big.NewInt(0), big.NewInt(5))},
+		{NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5)), NewFE(big.NewInt(1), big.NewInt(5))},
+		{NewFE(big.NewInt(1), big.NewInt(11)), NewFE(big.NewInt(9), big.NewInt(11)), NewFE(big.NewInt(8), big.NewInt(11)), NewFE(big.NewInt(6), big.NewInt(11))},
 	}
 
 	for _, test := range testCases {
@@ -93,13 +96,13 @@ func TestFieldElementMulMulti(t *testing.T) {
 
 func TestFieldElementPow(t *testing.T) {
 	testCases := []struct {
-		exp     int64
+		exp     *big.Int
 		x, want FE
 	}{
-		{3, NewFE(3, 5), NewFE(2, 5)},
-		{6, NewFE(2, 5), NewFE(4, 5)},
-		{7, NewFE(5, 11), NewFE(3, 11)},
-		{-3, NewFE(7, 13), NewFE(8, 13)},
+		{big.NewInt(3), NewFE(big.NewInt(3), big.NewInt(5)), NewFE(big.NewInt(2), big.NewInt(5))},
+		{big.NewInt(6), NewFE(big.NewInt(2), big.NewInt(5)), NewFE(big.NewInt(4), big.NewInt(5))},
+		{big.NewInt(7), NewFE(big.NewInt(5), big.NewInt(11)), NewFE(big.NewInt(3), big.NewInt(11))},
+		{big.NewInt(-3), NewFE(big.NewInt(7), big.NewInt(13)), NewFE(big.NewInt(8), big.NewInt(13))},
 	}
 
 	for _, test := range testCases {
@@ -112,8 +115,8 @@ func TestFieldElementPow(t *testing.T) {
 
 func TestFieldElementDiv(t *testing.T) {
 	testCases := []struct{ x, y, want FE }{
-		{NewFE(2, 19), NewFE(7, 19), NewFE(3, 19)},
-		{NewFE(7, 19), NewFE(5, 19), NewFE(9, 19)},
+		{NewFE(big.NewInt(2), big.NewInt(19)), NewFE(big.NewInt(7), big.NewInt(19)), NewFE(big.NewInt(3), big.NewInt(19))},
+		{NewFE(big.NewInt(7), big.NewInt(19)), NewFE(big.NewInt(5), big.NewInt(19)), NewFE(big.NewInt(9), big.NewInt(19))},
 	}
 
 	for _, test := range testCases {

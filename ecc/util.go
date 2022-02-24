@@ -1,8 +1,19 @@
 package ecc
 
-import "math"
+import (
+	"math/big"
+)
 
-var INFINITY int64 = ^int64(math.Inf(1))
+// initialized to 2^256
+var INFINITY *big.Int
+
+func init() {
+	if num, ok := new(big.Int).SetString("0x10000000000000000000000000000000000000000000000000000000000000000", 0); ok {
+		INFINITY = num
+	} else {
+		panic("INFINITY creation was unsuccessful")
+	}
+}
 
 // Modulus operations with negative numbers just return the negative number
 func Mod(x, y int64) int64 {
