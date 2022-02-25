@@ -100,7 +100,7 @@ func Mul(values ...FE) FE {
 }
 
 func (e fe) Pow(exp *big.Int) FE {
-	// Fermat's Little Thereom 1=n^(n-1) mod p; where p is prime
+	// Fermat's Little Thereom 1=n^(p-1) mod p; where p is prime
 	// negative exponents can be made positive by a^-3 = a^-2 * a^(p-1) = a^(p-4)
 	// doing this repeatedly will turn the `exp` positive
 	exp = exp.Mod(exp, new(big.Int).Sub(e.prime, big.NewInt(1)))
@@ -110,7 +110,7 @@ func (e fe) Pow(exp *big.Int) FE {
 	return fe{num: num, prime: e.prime}
 }
 
-// trick is to turn division float64o exponentiation a * a^-1 = 1
+// trick is to turn division exponentiation a * a^-1 = 1
 // a^-1 = a^-1 * a^(p-1) mod p = a^(p-2) mod p
 func (e fe) Div(other FE) FE {
 	if !e.FieldEquals(other) {

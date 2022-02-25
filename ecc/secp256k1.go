@@ -36,3 +36,17 @@ func (p Secp256k1Point) Scale(coefficient *big.Int) Point {
 	}
 	return result
 }
+
+// z - the double sha256
+// u = z/s   v = r/s   R = uG + vP
+func (p Secp256k1Point) Verify(z *big.Int, sig Signature) bool {
+	sInv := new(big.Int).Exp(sig.S, new(big.Int).Sub(SECP256K1Order, big.NewInt(2)), SECP256K1Order)
+	u := new(big.Int).Mul(z, sInv)
+	u = u.Mod(u, SECP256K1Order)
+	v := new(big.Int).Mul(sig.R, sInv)
+	v = v.Mod(v, SECP256K1Order)
+	R := NewSecp256k1Point(SECP256K1GPointX, SECP256K1GPointY).Scale(u).Add(p.Scale(v))
+
+	// x coordinate must match
+	return R.X().Num().Cmp(sig.R) == 0
+}
