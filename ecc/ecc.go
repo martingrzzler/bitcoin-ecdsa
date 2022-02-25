@@ -1,8 +1,6 @@
 package ecc
 
-import (
-	"math/big"
-)
+import "math/big"
 
 // initialized to 2^256
 var INFINITY *big.Int
@@ -10,6 +8,8 @@ var SECP256K1Order *big.Int
 var SECP256K1Prime *big.Int
 var SECP256K1A FE
 var SECP256K1B FE
+var SECP256K1GPointX Secp256k1FE
+var SECP256K1GPointY Secp256k1FE
 
 func init() {
 	if num, ok := new(big.Int).SetString("0x10000000000000000000000000000000000000000000000000000000000000000", 0); ok {
@@ -30,28 +30,18 @@ func init() {
 		panic("SECP256K1Order creation was unsuccessful")
 	}
 
+	x, ok := new(big.Int).SetString("0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", 0)
+	if !ok {
+		panic("Genrator point x creation failed")
+	}
+	SECP256K1GPointX = NewSecp256k1FE(x)
+
+	y, ok := new(big.Int).SetString("0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8", 0)
+	if !ok {
+		panic("Genrator point y creation failed")
+	}
+	SECP256K1GPointY = NewSecp256k1FE(y)
+
 	SECP256K1A = NewFE(new(big.Int), SECP256K1Prime)
 	SECP256K1B = NewFE(big.NewInt(7), SECP256K1Prime)
-}
-
-// Modulus operations with negative numbers just return the negative number
-func Mod(x, y int64) int64 {
-	return ((x % y) + y) % y
-}
-
-// ModExpWithSquaring calculates modular exponentiation with exponentiation by squaring, O(log exponent).
-func ModPow(base, exponent, modulus int64) int64 {
-	if modulus == 1 {
-		return 0
-	}
-	if exponent == 0 {
-		return 1
-	}
-
-	result := ModPow(base, exponent/2, modulus)
-	result = (result * result) % modulus
-	if exponent&1 != 0 {
-		return ((base % modulus) * result) % modulus
-	}
-	return result % modulus
 }
