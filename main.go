@@ -18,7 +18,7 @@ func main() {
 	hash.Write([]byte("Mysdjkfnkjsdhfksdhfkjhk"))
 	z := new(big.Int).SetBytes(hash.Sum(nil))
 
-	sig := kp.Sign(z)
+	sig := ecc.Sign(kp, z)
 
 	publicKey := kp.Address
 

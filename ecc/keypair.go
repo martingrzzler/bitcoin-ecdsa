@@ -17,11 +17,30 @@ func NewKeyPair(private *big.Int) Keypair {
 	return Keypair{Private: private, Address: ToSecp256k1Point(address)}
 }
 
+func (kp Keypair) SEC(compressed bool) []byte {
+	res := make([]byte, 0)
+	if compressed {
+		if new(big.Int).Mod(kp.Address.Y().Num(), big.NewInt(0)).Cmp(big.NewInt(0)) == 0 {
+			res = append(res, 0x02)
+		} else {
+			res = append(res, 0x03)
+		}
+		res = append(res, kp.Address.X().Num().Bytes()...)
+		return res
+	}
+
+	res = []byte{0x04}
+	res = append(res, kp.Address.X().Num().Bytes()...)
+	res = append(res, kp.Address.Y().Num().Bytes()...)
+
+	return res
+}
+
 // eG = P
 // k - random big number
 // R = kG -> r = R.x
 // s = (z + re)/k
-func (kp Keypair) Sign(z *big.Int) Signature {
+func Sign(kp Keypair, z *big.Int) Signature {
 	k := kp.Deterministic(z)
 	r := NewSecp256k1Point(SECP256K1GPointX, SECP256K1GPointY).Scale(k).X().Num()
 	kInv := new(big.Int).Exp(k, new(big.Int).Sub(SECP256K1Order, big.NewInt(2)), SECP256K1Order)
