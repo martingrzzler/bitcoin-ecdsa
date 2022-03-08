@@ -45,3 +45,7 @@ func init() {
 	SECP256K1A = NewFE(new(big.Int), SECP256K1Prime)
 	SECP256K1B = NewFE(big.NewInt(7), SECP256K1Prime)
 }
+
+func GreaterOrEqual(a, b *big.Int) bool {
+	return a.Cmp(b) == 0 || a.Cmp(b) == 1
+}

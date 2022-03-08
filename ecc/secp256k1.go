@@ -22,8 +22,8 @@ func NewSecp256k1Point(x, y Secp256k1FE) Secp256k1Point {
 }
 
 func (p Secp256k1Point) Scale(coefficient *big.Int) Point {
-	coefficient = coefficient.Mod(coefficient, SECP256K1Order)
-	coeff := coefficient
+	c := new(big.Int).Mod(coefficient, SECP256K1Order)
+	coeff := c
 	var current Point = p
 	result := NewInfinityPoint(p.A(), p.B())
 

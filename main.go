@@ -1,15 +1,27 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"math/big"
 	"moos/ecc"
 )
 
 func main() {
 
-	var gpoint ecc.Point = ecc.NewSecp256k1Point(ecc.SECP256K1GPointX, ecc.SECP256K1GPointY)
+	secret := "qwerty"
+	hash := sha256.New()
+	hash.Write([]byte(secret))
+	privateKey := new(big.Int).SetBytes(hash.Sum(nil))
+	kp := ecc.NewKeyPair(privateKey)
+	hash = sha256.New()
+	hash.Write([]byte("Mysdjkfnkjsdhfksdhfkjhk"))
+	z := new(big.Int).SetBytes(hash.Sum(nil))
 
-	res := gpoint.Scale(ecc.SECP256K1Order)
+	sig := kp.Sign(z)
 
-	fmt.Println(res.String())
+	publicKey := ecc.Secp256k1Point{kp.Address}
+
+	fmt.Println(publicKey.Verify(z, sig))
+
 }
