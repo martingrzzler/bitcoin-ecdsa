@@ -8,13 +8,13 @@ import (
 
 type Keypair struct {
 	Private *big.Int
-	Address Point
+	Address Secp256k1Point
 }
 
 func NewKeyPair(private *big.Int) Keypair {
 	address := NewSecp256k1Point(SECP256K1GPointX, SECP256K1GPointY).Scale(new(big.Int).Set(private))
 
-	return Keypair{Private: private, Address: address}
+	return Keypair{Private: private, Address: ToSecp256k1Point(address)}
 }
 
 // eG = P
@@ -35,6 +35,20 @@ func (kp Keypair) Sign(z *big.Int) Signature {
 	}
 
 	return NewSignature(r, s)
+}
+
+// z - the double sha256
+// u = z/s   v = r/s   R = uG + vP
+func Verify(p Secp256k1Point, z *big.Int, sig Signature) bool {
+	sInv := new(big.Int).Exp(sig.S, new(big.Int).Sub(SECP256K1Order, big.NewInt(2)), SECP256K1Order)
+	u := new(big.Int).Mul(z, sInv)
+	u = u.Mod(u, SECP256K1Order)
+	v := new(big.Int).Mul(sig.R, sInv)
+	v = v.Mod(v, SECP256K1Order)
+	R := NewSecp256k1Point(SECP256K1GPointX, SECP256K1GPointY).Scale(u).Add(p.Scale(v))
+
+	// x coordinate must match
+	return R.X().Num().Cmp(sig.R) == 0
 }
 
 // generate a k which is garantueed not to be duplicated

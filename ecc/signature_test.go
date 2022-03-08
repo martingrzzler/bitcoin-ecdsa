@@ -29,7 +29,7 @@ func TestVerification(t *testing.T) {
 	point := NewSecp256k1Point(NewSecp256k1FE(px), NewSecp256k1FE(py))
 	sig := NewSignature(r, s)
 
-	if !point.Verify(z, sig) {
+	if !Verify(point, z, sig) {
 		t.Errorf("Expected signature to be valid")
 	}
 

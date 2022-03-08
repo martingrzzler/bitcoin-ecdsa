@@ -20,8 +20,8 @@ func main() {
 
 	sig := kp.Sign(z)
 
-	publicKey := ecc.Secp256k1Point{kp.Address}
+	publicKey := kp.Address
 
-	fmt.Println(publicKey.Verify(z, sig))
+	fmt.Println(ecc.Verify(publicKey, z, sig))
 
 }
