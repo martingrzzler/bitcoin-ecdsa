@@ -17,6 +17,8 @@ type FE interface {
 	IsZero() bool
 	Prime() *big.Int
 	Num() *big.Int
+	Sqrt() FE
+	Even() bool
 }
 
 // Field Element
@@ -122,6 +124,17 @@ func (e fe) Div(other FE) FE {
 	num = num.Mod(num, e.prime)
 
 	return fe{num: num, prime: e.prime}
+}
+
+func (e fe) Sqrt() FE {
+	exp := new(big.Int).Div(new(big.Int).Add(e.prime, big.NewInt(1)), big.NewInt(4))
+	num := new(big.Int).Exp(e.num, exp, e.prime)
+
+	return fe{num: num, prime: e.prime}
+}
+
+func (e fe) Even() bool {
+	return new(big.Int).Mod(e.num, big.NewInt(2)).Cmp(big.NewInt(0)) == 0
 }
 
 func (e fe) FieldEquals(other FE) bool {

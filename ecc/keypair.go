@@ -20,7 +20,7 @@ func NewKeyPair(private *big.Int) Keypair {
 func (kp Keypair) SEC(compressed bool) []byte {
 	res := make([]byte, 0)
 	if compressed {
-		if new(big.Int).Mod(kp.Address.Y().Num(), big.NewInt(0)).Cmp(big.NewInt(0)) == 0 {
+		if kp.Address.Y().Even() {
 			res = append(res, 0x02)
 		} else {
 			res = append(res, 0x03)
@@ -34,6 +34,32 @@ func (kp Keypair) SEC(compressed bool) []byte {
 	res = append(res, kp.Address.Y().Num().Bytes()...)
 
 	return res
+}
+
+func Parse(secData []byte) Secp256k1Point {
+	if secData[0] == 0x04 {
+		x := new(big.Int).SetBytes(secData[1:33])
+		y := new(big.Int).SetBytes(secData[33:65])
+		return NewSecp256k1Point(NewSecp256k1FE(x), NewSecp256k1FE(y))
+	}
+
+	x := NewSecp256k1FE(new(big.Int).SetBytes(secData[1:]))
+	beta := x.Pow(big.NewInt(3)).Add(SECP256K1B).Sqrt()
+
+	if beta.Even() {
+		if secData[0] == 0x02 {
+			return NewSecp256k1Point(x, NewSecp256k1FE(beta.Num()))
+		} else if secData[0] == 0x03 {
+			return NewSecp256k1Point(x, NewSecp256k1FE(new(big.Int).Sub(SECP256K1Prime, beta.Num())))
+		}
+	}
+	if secData[0] == 0x02 {
+		return NewSecp256k1Point(x, NewSecp256k1FE(new(big.Int).Sub(SECP256K1Prime, beta.Num())))
+	} else if secData[0] == 0x03 {
+		return NewSecp256k1Point(x, NewSecp256k1FE(beta.Num()))
+	}
+
+	panic("Parsing failed")
 }
 
 // eG = P

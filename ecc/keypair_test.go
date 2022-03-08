@@ -22,3 +22,18 @@ func TestSEC(t *testing.T) {
 		t.Fatalf("Slices aren't equal")
 	}
 }
+
+func TestParse(t *testing.T) {
+	kp := NewKeyPair(big.NewInt(0xdeadbeef54321))
+
+	result := kp.SEC(true)
+
+	want, err := hex.DecodeString("0296be5b1292f6c856b3c5654e886fc13511462059089cdf9c479623bfcbe77690")
+	if err != nil {
+		t.Fatal("Decoding Failed")
+	}
+
+	if !bytes.Equal(result, want) {
+		t.Fatalf("Slices aren't equal")
+	}
+}
