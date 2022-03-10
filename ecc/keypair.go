@@ -3,6 +3,7 @@ package ecc
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"errors"
 	"math/big"
 )
 
@@ -36,11 +37,11 @@ func (kp Keypair) SEC(compressed bool) []byte {
 	return res
 }
 
-func Parse(secData []byte) Secp256k1Point {
+func Parse(secData []byte) (Secp256k1Point, error) {
 	if secData[0] == 0x04 {
 		x := new(big.Int).SetBytes(secData[1:33])
 		y := new(big.Int).SetBytes(secData[33:65])
-		return NewSecp256k1Point(NewSecp256k1FE(x), NewSecp256k1FE(y))
+		return NewSecp256k1Point(NewSecp256k1FE(x), NewSecp256k1FE(y)), nil
 	}
 
 	x := NewSecp256k1FE(new(big.Int).SetBytes(secData[1:]))
@@ -48,18 +49,18 @@ func Parse(secData []byte) Secp256k1Point {
 
 	if beta.Even() {
 		if secData[0] == 0x02 {
-			return NewSecp256k1Point(x, NewSecp256k1FE(beta.Num()))
+			return NewSecp256k1Point(x, NewSecp256k1FE(beta.Num())), nil
 		} else if secData[0] == 0x03 {
-			return NewSecp256k1Point(x, NewSecp256k1FE(new(big.Int).Sub(SECP256K1Prime, beta.Num())))
+			return NewSecp256k1Point(x, NewSecp256k1FE(new(big.Int).Sub(SECP256K1Prime, beta.Num()))), nil
 		}
 	}
 	if secData[0] == 0x02 {
-		return NewSecp256k1Point(x, NewSecp256k1FE(new(big.Int).Sub(SECP256K1Prime, beta.Num())))
+		return NewSecp256k1Point(x, NewSecp256k1FE(new(big.Int).Sub(SECP256K1Prime, beta.Num()))), nil
 	} else if secData[0] == 0x03 {
-		return NewSecp256k1Point(x, NewSecp256k1FE(beta.Num()))
+		return NewSecp256k1Point(x, NewSecp256k1FE(beta.Num())), nil
 	}
 
-	panic("Parsing failed")
+	return *new(Secp256k1Point), errors.New("unable to parse incoming SEC")
 }
 
 // eG = P

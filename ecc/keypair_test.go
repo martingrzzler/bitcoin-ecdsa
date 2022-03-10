@@ -26,14 +26,25 @@ func TestSEC(t *testing.T) {
 func TestParse(t *testing.T) {
 	kp := NewKeyPair(big.NewInt(0xdeadbeef54321))
 
-	result := kp.SEC(true)
+	sec := kp.SEC(true)
 
-	want, err := hex.DecodeString("0296be5b1292f6c856b3c5654e886fc13511462059089cdf9c479623bfcbe77690")
+	result, err := Parse(sec)
+
 	if err != nil {
-		t.Fatal("Decoding Failed")
+		t.Errorf("unxepected parsing error")
 	}
 
-	if !bytes.Equal(result, want) {
-		t.Fatalf("Slices aren't equal")
+	if !kp.Address.Equals(result) {
+		t.Fatalf("Parsing did not work")
+	}
+
+	sec = kp.SEC(true)
+
+	sec[0] = 0x08
+
+	result, err = Parse(sec)
+
+	if err == nil {
+		t.Errorf("should have thrown error")
 	}
 }
