@@ -8,20 +8,27 @@ import (
 )
 
 func main() {
+	secret := "My secret phrase"
 
-	secret := "qwerty"
 	hash := sha256.New()
 	hash.Write([]byte(secret))
-	privateKey := new(big.Int).SetBytes(hash.Sum(nil))
-	kp := ecc.NewKeyPair(privateKey)
-	hash = sha256.New()
-	hash.Write([]byte("Mysdjkfnkjsdhfksdhfkjhk"))
-	z := new(big.Int).SetBytes(hash.Sum(nil))
 
-	sig := ecc.Sign(kp, z)
+	privateNumber := new(big.Int).SetBytes(hash.Sum(nil))
 
-	publicKey := kp.Address
+	keypair := ecc.NewKeyPair(privateNumber)
 
-	fmt.Println(ecc.Verify(publicKey, z, sig))
+	message := "Bob authorizes Alice to use his car"
+	hash.Reset()
+	hash.Write([]byte(message))
+	messageHash := hash.Sum(nil)
+	z := new(big.Int).SetBytes(messageHash)
+
+	signature := ecc.Sign(keypair, z)
+
+	fmt.Println(signature)
+
+	valid := ecc.Verify(keypair.Address, z, signature)
+
+	fmt.Println(valid)
 
 }

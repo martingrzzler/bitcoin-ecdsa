@@ -1,6 +1,8 @@
 package ecc
 
 import (
+	"bytes"
+	"encoding/hex"
 	"math/big"
 	"testing"
 )
@@ -33,4 +35,26 @@ func TestVerification(t *testing.T) {
 		t.Errorf("Expected signature to be valid")
 	}
 
+}
+
+func TestDER(t *testing.T) {
+	r, ok := new(big.Int).SetString("0x37206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c6", 0)
+	if !ok {
+		t.Errorf("Failed to create r")
+	}
+
+	s, ok := new(big.Int).SetString("0x8ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec", 0)
+	if !ok {
+		t.Errorf("Failed to create s")
+	}
+
+	sig := NewSignature(r, s)
+
+	want, err := hex.DecodeString("3045022037206a0610995c58074999cb9767b87af4c4978db68c06e8e6e81d282047a7c60221008ca63759c1157ebeaec0d03cecca119fc9a75bf8e6d0fa65c841c8e2738cdaec")
+	if err != nil {
+		t.Errorf("Failed parsing want")
+	}
+	if !bytes.Equal(sig.DER(), want) {
+		t.Errorf("expected byte slices to equal")
+	}
 }
